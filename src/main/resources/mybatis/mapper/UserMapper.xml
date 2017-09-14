@@ -1,0 +1,145 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.lrs.admin.dao.UserDao" >
+ 	<resultMap id="userResultMap" type="user" >
+        <id column="user_id" property="userId" jdbcType="BIGINT" />
+        <result column="username" property="username" jdbcType="VARCHAR" />
+        <result column="password" property="password" jdbcType="VARCHAR" />
+        <result column="nick_name" property="nickName" jdbcType="VARCHAR" />
+        <result column="pic_path" property="picPath" jdbcType="VARCHAR" />
+        <result column="status" property="status" jdbcType="VARCHAR" />
+    </resultMap>
+    
+ 	<resultMap id="roleResultMap" type="role" >
+        <id column="role_id" property="roleId" jdbcType="BIGINT" />
+        <result column="role_name" property="roleName" jdbcType="VARCHAR" />
+        <result column="role_desc" property="roleDesc" jdbcType="VARCHAR" />
+        <result column="rights" property="rights" jdbcType="VARCHAR" />
+        <result column="add_qx" property="addQX" jdbcType="VARCHAR" />
+        <result column="del_qx" property="delQX" jdbcType="VARCHAR" />
+        <result column="edit_qx" property="editQX" jdbcType="VARCHAR" />
+        <result column="query_qx" property="queryQX" jdbcType="VARCHAR" />
+    </resultMap>
+    
+    
+	 <select id="getUserInfo" parameterType="pm" resultMap="userResultMap">
+	 	SELECT 
+			a.user_id,
+			a.username,
+			a.nick_name,
+			a.password,
+			a.pic_path,
+			a.status
+		from 
+			sys_user a
+		where
+			1=1
+		<if test="username != null and username != ''">
+	  		and	a.username = #{username}
+		</if>
+		<if test="password != null and password != ''">
+	  		and a.password = #{password}
+		</if>
+		<if test="user_id != null and user_id != ''">
+			and a.user_id = #{user_id}
+		</if>
+		ORDER BY
+			a.user_id asc,a.create_time ASC
+	 </select>
+	 
+	 <select id="getUserRoleList" parameterType="pm" resultMap="roleResultMap">
+	 	SELECT 
+			a.*
+		from 
+			sys_role a 
+		LEFT JOIN
+			sys_user_role b
+		ON
+			a.role_id = b.role_id
+		WHERE
+			b.user_id=#{user_id}
+	 </select>
+	 
+	 <select id="getUserList" resultType="pm">
+	 	SELECT 
+			user_id,
+			username,
+			nick_name,
+			pic_path,
+			create_time
+		FROM 
+			sys_user
+	 </select>
+	 <insert id="saveLoginTime" parameterType="String">
+	 	insert into sys_login(user_id)values(#{user_id})
+	 </insert>
+	 
+	 <insert id="saveUser" parameterType="pm">
+	 	insert into sys_user(
+	 		username,
+	 		nick_name,
+	 		password,
+	 		<if test="pic_path != null and pic_path != ''">
+	 			pic_path,
+	 		</if>
+	 		create_time
+	 	)values(
+	 		#{username},
+	 		#{nick_name},
+	 		#{psw},
+	 		<if test="pic_path != null and pic_path != ''">
+	 			#{pic_path},
+	 		</if>
+	 		#{create_time}
+	 	)
+	 </insert>
+	 
+	 <!-- 批量添加用户角色 -->
+	 <insert id="bathSaveUserRole" parameterType="list">
+	 	insert into sys_user_role(
+	 		role_id,
+	 		user_id
+	 	)values
+	 	<foreach collection="list" item="item" index="index" separator=",">
+	 		(
+		 		#{item.role_id},
+		 		#{item.user_id}
+	 		)
+	 	</foreach>
+	 </insert>
+	 
+	 <update id="editUser" parameterType="pm">
+	 	update 
+	 		sys_user 
+	 	set 
+	 		user_id=#{user_id}
+	 		<if test="username != null and username != ''">
+	 			,username=#{username}
+	 		</if>
+	 		
+	 		<if test="nick_name != null and nick_name != ''">
+	 			,nick_name=#{nick_name}
+	 		</if>
+	 		
+	 		<if test="password != null and password != ''">
+	 			,password=#{password}
+	 		</if>
+	 		
+	 		<if test="pic_path != null and pic_path != ''">
+	 			,pic_path=#{pic_path}
+	 		</if>
+	 		<if test="status != null and status != ''">
+	 			,status=#{status}
+	 		</if>
+ 		where
+ 			user_id = #{user_id}
+	 </update>
+	 
+	 <delete id="delUser" parameterType="String">
+	 	delete from sys_user where user_id =#{user_id}
+	 </delete>
+	 
+	 <delete id="delUserRole" parameterType="String">
+	 	delete from sys_user_role where user_id =#{user_id}
+	 </delete>
+</mapper>

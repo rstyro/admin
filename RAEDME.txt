@@ -1,0 +1,1 @@
+run admin.sql

@@ -1,0 +1,92 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.lrs.admin.dao.RoleDao" >
+	
+	<select id="list"  resultType="pm">
+		SELECT 
+			role_id,
+			role_name,
+			role_desc,
+			rights,
+			add_qx,
+			del_qx,
+			edit_qx,
+			query_qx
+		from 
+			sys_role
+	</select>
+	
+	<select id="getRoleById" parameterType="pm"  resultType="pm">
+		SELECT 
+			role_id,
+			role_name,
+			role_desc,
+			rights,
+			add_qx,
+			del_qx,
+			edit_qx,
+			query_qx
+		from 
+			sys_role
+		where 
+			role_id=#{role_id}
+	</select>
+	
+	<select id="getRoleByuId" parameterType="pm"  resultType="pm">
+		SELECT 
+			id,
+			user_id,
+			role_id
+		from 
+			sys_user_role 
+		where 
+			user_id=#{user_id}
+	</select>
+	
+	<update id="updateRoleQX" parameterType="pm">
+		update sys_role set
+			role_id=#{role_id}
+			<if test="role_name != null and role_name != ''">
+				,role_name = #{role_name}
+			</if>
+			<if test="role_desc != null and role_desc != ''">
+				,role_desc = #{role_desc}
+			</if>
+			<if test="rights != null and rights != ''">
+				,rights = #{rights}
+			</if>
+			<if test="add_qx != null and add_qx != ''">
+				,add_qx = #{add_qx}
+			</if>
+			<if test="del_qx != null and del_qx != ''">
+				,del_qx = #{del_qx}
+			</if>
+			<if test="edit_qx != null and edit_qx != ''">
+				,edit_qx = #{edit_qx}
+			</if>
+			<if test="query_qx != null and query_qx != ''">
+				,query_qx = #{query_qx}
+			</if>
+			where 1=1 and role_id=#{role_id}
+	</update>
+	
+	<insert id="addRole" parameterType="pm">
+		insert into sys_role(
+			role_name,
+			role_desc,
+			user_id
+		)values(
+			#{role_name},
+			#{role_desc},
+			#{user_id}
+		)
+	</insert>
+	
+	<delete id="delRole" parameterType="pm">
+		delete from sys_role where role_id=#{role_id}
+	</delete>
+	<delete id="delUserRole" parameterType="pm">
+		delete from sys_user_role where role_id=#{role_id}
+	</delete>
+ 
+</mapper>

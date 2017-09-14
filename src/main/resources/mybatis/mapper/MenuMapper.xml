@@ -1,0 +1,85 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.lrs.admin.dao.MenuDao" >
+    
+    <resultMap type="Menu" id="menuResultMap">
+		<id column="MENU_ID" property="MENU_ID"/>
+		<result column="MENU_NAME" property="MENU_NAME"/>
+		<result column="MENU_URL" property="MENU_URL"/>
+		<result column="PARENT_ID" property="PARENT_ID"/>
+		<result column="sort_num" property="MENU_ORDER"/>
+		<result column="MENU_ICON" property="MENU_ICON"/>
+		<result column="MENU_TYPE" property="MENU_TYPE"/>
+	</resultMap>
+    
+	<select id="getAllParentMenu" resultMap="menuResultMap">
+		SELECT * from sys_menu WHERE parent_id=0 and is_del=0 ORDER BY sort_num ASC
+	</select>
+	
+	<select id="getSubMenuByParentId" parameterType="long" resultMap="menuResultMap">
+		SELECT * from sys_menu WHERE parent_id=#{parent_id} and is_del=0 ORDER BY sort_num ASC
+	</select>
+	
+	<select id="getMaxIdByName" resultType="long">
+		SELECT max(menu_id) as maxId from sys_menu
+	</select>
+	
+	<insert id="saveMenu" parameterType="pm">
+		insert into sys_menu(
+			menu_id,
+			parent_id,
+			menu_name,
+			menu_url,
+			menu_type,
+			menu_icon,
+			<if test="sort_num != null and sort_num != ''">
+				sort_num,
+			</if>
+			user_id,
+			create_time
+		)values(
+			#{menu_id},
+			#{parent_id},
+			#{menu_name},
+			#{menu_url},
+			#{menu_type},
+			#{menu_icon},
+			<if test="sort_num != null and sort_num != ''">
+			#{sort_num},
+			</if>
+			#{user_id},
+			#{create_time}
+		)	
+	</insert>
+	
+	<update id="delMenu" parameterType="String">
+		update sys_menu set is_del = 1 where menu_id=#{menu_id} or parent_id=#{menu_id}
+	</update>
+	
+	<update id="editMenu" parameterType="pm">
+		update 
+			sys_menu 
+		set 
+			menu_name=#{menu_name},
+			menu_url=#{menu_url},
+			menu_type=#{menu_type},
+			menu_icon=#{menu_icon},
+			sort_num=#{sort_num}
+		where 
+			menu_id=#{menu_id}
+	</update>
+	
+	<select id="findMenu" parameterType="String" resultType="pm">
+		select 
+			menu_id,
+			parent_id,
+			menu_name,
+			menu_url,
+			menu_type,
+			menu_icon,
+			sort_num
+		from sys_menu
+			where menu_id=#{menu_id}
+	</select>
+ 
+</mapper>
