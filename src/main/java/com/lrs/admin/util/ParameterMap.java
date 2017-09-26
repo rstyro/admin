@@ -1,4 +1,4 @@
-﻿package com.lrs.admin.util;
+package com.lrs.admin.util;
 
 import java.io.UnsupportedEncodingException;
 import java.util.Collection;

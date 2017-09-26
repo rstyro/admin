@@ -2,14 +2,11 @@ package com.lrs.admin.service.impl;
 
 import java.io.ByteArrayInputStream;
 import java.io.File;
-import java.io.FileInputStream;
-import java.io.IOException;
 import java.io.InputStream;
 import java.math.BigInteger;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
-import java.util.Properties;
 import java.util.concurrent.TimeUnit;
 
 import javax.servlet.http.HttpSession;
@@ -65,22 +62,6 @@ public class UserService implements IUserService {
 	@Autowired
 	private RedisTemplate<String, Object> redis;
 
-	
-	static{
-		try {
-			Properties pro = new Properties();
-			FileInputStream in = new FileInputStream("application.properties");
-			pro.load(in);
-			String windowRootFold = pro.getProperty("windows.upload.root.folder");
-			String LinuxRootFold = pro.getProperty("linux.upload.root.folder");
-			System.out.println("windowRootFold="+windowRootFold);
-			System.out.println("LinuxRootFold="+LinuxRootFold);
-			in.close();
-		} catch (IOException e) {
-			e.printStackTrace();
-		}
-		
-	}
 	
 	@Override
 	public HashMap<String, Object> login(ParameterMap pm, HttpSession session) {

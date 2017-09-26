@@ -8,7 +8,9 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 import com.lrs.admin.controller.base.BaseController;
+import com.lrs.admin.entity.Const;
 import com.lrs.admin.entity.ReturnModel;
+import com.lrs.admin.entity.User;
 import com.lrs.admin.service.IUserService;
 import com.lrs.admin.util.Jurisdiction;
 
@@ -29,6 +31,7 @@ public class UserController extends BaseController{
 	public Object login(Model model){
 		if(!Jurisdiction.buttonJurisdiction(menuUrl,"query", this.getSession())){return ReturnModel.getNotAuthModel();}
 		model.addAttribute("users", userService.getUserList());
+		model.addAttribute("meid", ((User)this.getSession().getAttribute(Const.SESSION_USER)).getUserId());
 		return "page/user/list";
 	}
 	
