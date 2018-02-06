@@ -59,8 +59,8 @@ public class UserService implements IUserService {
 	
 	private Logger log = Logger.getLogger(this.getClass());
 
-	@Autowired
-	private RedisTemplate<String, Object> redis;
+//	@Autowired
+//	private RedisTemplate<String, Object> redis;
 
 	
 	@Override
@@ -79,23 +79,24 @@ public class UserService implements IUserService {
 			pm.put("password", psw);
 			User user = userDao.getUserInfo(pm);
 			
-			Integer errorNum = (Integer) redis.opsForValue().get(userName);
-			Integer lockIpNum = (Integer) redis.opsForValue().get(ip);
-			if(lockIpNum != null && lockIpNum >= 10){
-				return ReturnModel.getModel("此ip登录错误次数过多，目前已锁定。请联系管理员", "failed", null);
-			}else if(lockIpNum == null){
-				lockIpNum=0;
-			}
-			if(errorNum != null && errorNum >= 5){
-				return ReturnModel.getModel("此账号登陆错误次数受限,最后登录ip为:"+redis.opsForValue().get("IP-"+userName), "failed", null);
-			}else if(errorNum == null){
-				errorNum=0;
-			}
-			if (user == null) {
-				checkAccount(lockIpNum, errorNum, ip, userName);
-				return ReturnModel.getModel("用户名或密码错误", "failed", null);
-			}
-			System.out.println("user.getStatus()="+user.getStatus());
+			//下面是redis 的
+//			Integer errorNum = (Integer) redis.opsForValue().get(userName);
+//			Integer lockIpNum = (Integer) redis.opsForValue().get(ip);
+//			if(lockIpNum != null && lockIpNum >= 10){
+//				return ReturnModel.getModel("此ip登录错误次数过多，目前已锁定。请联系管理员", "failed", null);
+//			}else if(lockIpNum == null){
+//				lockIpNum=0;
+//			}
+//			if(errorNum != null && errorNum >= 5){
+//				return ReturnModel.getModel("此账号登陆错误次数受限,最后登录ip为:"+redis.opsForValue().get("IP-"+userName), "failed", null);
+//			}else if(errorNum == null){
+//				errorNum=0;
+//			}
+//			if (user == null) {
+//				checkAccount(lockIpNum, errorNum, ip, userName);
+//				return ReturnModel.getModel("用户名或密码错误", "failed", null);
+//			}
+//			System.out.println("user.getStatus()="+user.getStatus());
 			if("lock".equalsIgnoreCase(user.getStatus())){
 				return ReturnModel.getModel("此账号已锁定", "failed", null);
 			}
@@ -313,28 +314,28 @@ public class UserService implements IUserService {
 	 * @param ip
 	 * @param userName
 	 */
-	public void checkAccount(Integer lockIpNum,Integer errorNum,String ip,String userName){
-		try {
-			lockIpNum += 1;
-			errorNum += 1;
-			if(lockIpNum >= 10){
-				redis.opsForValue().set(ip, lockIpNum, 12, TimeUnit.HOURS);
-				log.info("ip受限，来自用户:"+userName+",ip="+ip);
-			}else{
-				redis.opsForValue().set(ip, lockIpNum);
-			}
-			if(errorNum >= 5){
-				redis.opsForValue().set(userName, errorNum, 12, TimeUnit.HOURS);
-				redis.opsForValue().set("IP-"+userName, ip, 12, TimeUnit.HOURS);
-				log.info("登录错误次数受限，来自用户:"+userName+",ip="+ip);
-			}else{
-				redis.opsForValue().set(userName, errorNum);
-			}
-		} catch (Exception e) {
-			e.printStackTrace();
-			log.error("checkAccount error", e);
-		}
-	}
+//	public void checkAccount(Integer lockIpNum,Integer errorNum,String ip,String userName){
+//		try {
+//			lockIpNum += 1;
+//			errorNum += 1;
+//			if(lockIpNum >= 10){
+//				redis.opsForValue().set(ip, lockIpNum, 12, TimeUnit.HOURS);
+//				log.info("ip受限，来自用户:"+userName+",ip="+ip);
+//			}else{
+//				redis.opsForValue().set(ip, lockIpNum);
+//			}
+//			if(errorNum >= 5){
+//				redis.opsForValue().set(userName, errorNum, 12, TimeUnit.HOURS);
+//				redis.opsForValue().set("IP-"+userName, ip, 12, TimeUnit.HOURS);
+//				log.info("登录错误次数受限，来自用户:"+userName+",ip="+ip);
+//			}else{
+//				redis.opsForValue().set(userName, errorNum);
+//			}
+//		} catch (Exception e) {
+//			e.printStackTrace();
+//			log.error("checkAccount error", e);
+//		}
+//	}
 
 	/**
 	 * 验证权限
