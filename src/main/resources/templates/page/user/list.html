@@ -1,23 +1,7 @@
 <!DOCTYPE html>
 <html>
-<head>
-  <meta charset="utf-8">
-  <meta http-equiv="X-UA-Compatible" content="IE=edge">
-  <title>用户列表</title>
-  <!-- Tell the browser to be responsive to screen width -->
-  <meta content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no" name="viewport">
-  <link rel="stylesheet" href="/bower_components/bootstrap/dist/css/bootstrap.min.css">
-  <link rel="stylesheet" href="/dist/css/AdminLTE.min.css">
-  <link rel="stylesheet" href="/bower_components/font-awesome/css/font-awesome.min.css">
-  <link rel="stylesheet" href="/ztree/css/zTreeStyle/zTreeStyle.css">
-  <!-- DataTables -->
-  <link rel="stylesheet" href="/bower_components/datatables.net-bs/css/dataTables.bootstrap.min.css">
-  <!--[if lt IE 9]>
-  <script src="https://oss.maxcdn.com/html5shiv/3.7.3/html5shiv.min.js"></script>
-  <script src="https://oss.maxcdn.com/respond/1.4.2/respond.min.js"></script>
-  <![endif]-->
-  <!-- Google Font -->
-  <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Source+Sans+Pro:300,400,600,700,300italic,400italic,600italic">
+<head th:include="include/css-head :: css-head">
+</head>
 <style>
 	textarea{
 		width:100%;
@@ -96,7 +80,6 @@ div.cbp label.font{
 }
 
 </style>
-</head>
 <body>
 <!-- Content Header (Page header) -->
 <section class="content-header">
@@ -248,14 +231,15 @@ div.cbp label.font{
 </div>
 
 
-<script src="/bower_components/jquery/dist/jquery.min.js"></script>	
-<script src="/bower_components/bootstrap/dist/js/bootstrap.min.js"></script>
-<script src="/bower_components/datatables.net/js/jquery.dataTables.min.js"></script>
-<script src="/bower_components/datatables.net-bs/js/dataTables.bootstrap.min.js"></script>
-<script src="/ztree/js/jquery.ztree.core.js"></script>
-<script src="/ztree/js/jquery.ztree.excheck.min.js"></script>
+<script th:src="@{/bower_components/jquery/dist/jquery.min.js}"></script>	
+<script th:src="@{/bower_components/bootstrap/dist/js/bootstrap.min.js}"></script>
+<script th:src="@{/bower_components/datatables.net/js/jquery.dataTables.min.js}"></script>
+<script th:src="@{/bower_components/datatables.net-bs/js/dataTables.bootstrap.min.js}"></script>
+<script th:src="@{/ztree/js/jquery.ztree.core.js}"></script>
+<script th:src="@{/ztree/js/jquery.ztree.excheck.min.js}"></script>
 <!-- AdminLTE App -->
-<script src="/dist/js/adminlte.min.js"></script>
+<script th:src="@{/dist/js/adminlte.min.js}"></script>
+<script th:src="@{/js/path.js}"></script>
 <script>
 $(function(){
 	 //提示框
@@ -274,7 +258,7 @@ $(function(){
     });
 	
 	$("#addUser").click(function(){
-		reloadModelData("/user/add","添加用户","添加","","","","","","","add");
+		reloadModelData(_ctx+"/user/add","添加用户","添加","","","","","","","add");
 		$("#userModal").modal("show");
 	});
 	
@@ -287,7 +271,7 @@ $(function(){
 		var username= $("input[name='username']").val();
 		var nickName= $("input[name='nick_name']").val();
 		var password= $("input[name='password']").val();
-		if(url == '/user/add'){
+		if(url == _ctx+'/user/add'){
 			if(!checkAccount(username,nickName,password)){
 				return false;
 			}
@@ -318,7 +302,7 @@ $(function(){
 		var userId = $("input[name='role_user_id']").val();
 		$.ajax({
 			type:"POST",
-			url:"/user/editRole",
+			url:_ctx+"/user/editRole",
 			cache:false,
 			dataType:"json",
 			data:{user_id:userId,ids:ids,time:new Date().getTime()},
@@ -338,7 +322,7 @@ function delUser(userId,path){
 	if(confirm("你确定要删除此用户吗？")){
 		$.ajax({
 			type:"POST",
-			url:"/user/del",
+			url:_ctx+"/user/del",
 			dataType:"json",
 			data:{user_id:userId,pic_path:path},
 			cache:false,
@@ -358,7 +342,7 @@ function allotRole(userId){
 	$(".modal-body .cbp p").remove();
 	$.ajax({
 		type:"GET",
-		url:"/user/getRole",
+		url:_ctx+"/user/getRole",
 		dataType:"json",
 		data:{user_id:userId,time:new Date().getTime()},
 		cache:false,
@@ -390,7 +374,7 @@ function allotRole(userId){
 //编辑用户
 function editUser(user_id,username,nickName,path){
 	console.log(user_id+","+username+","+nickName+","+path);
-	reloadModelData("/user/edit","编辑用户","更新",user_id,"",path,username,nickName,"","edit");
+	reloadModelData(_ctx+"/user/edit","编辑用户","更新",user_id,"",path,username,nickName,"","edit");
 	$("#userModal").modal("show");
 }
 

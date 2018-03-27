@@ -27,7 +27,7 @@ function roleMenu(rid,qx,title){
 	reloadQXModal(rid,qx,title);
 	$.ajax({
 		type:"POST",
-		url:"/role/qx",
+		url:_ctx+"/role/qx",
 		cache:false,
 		data:{time:new Date().getTime(),qx:qx,role_id:rid},
 		dataType:"json",
@@ -60,7 +60,7 @@ function delRole(role_id){
 	if(confirm("你确定要删除吗？如果删除，拥有该角色的用户将失去此角色的权限。")){
 		$.ajax({
 			type:"GET",
-			url:"/role/del/"+role_id,
+			url:_ctx+"/role/del/"+role_id,
 			cache:false,
 			dataType:"json",
 			data:{time:new Date().getTime()},
@@ -77,7 +77,7 @@ function delRole(role_id){
 
 //编辑角色信息
 function editRole(roleId,role_name,role_desc){
-	reloadRoleModal(roleId,"/role/edit",role_name,role_desc,"编辑角色","更改");
+	reloadRoleModal(roleId,_ctx+"/role/edit",role_name,role_desc,"编辑角色","更改");
 	$("#roleModal").modal("show");
 }
 
@@ -100,7 +100,7 @@ function reloadRoleModal(roleId,url,role_name,role_desc,title,btnText){
 function updateRole(rid,ids,qx){
 	$.ajax({
 		type:"POST",
-		url:"/role/edit",
+		url:_ctx+"/role/edit",
 		cache:false,
 		dataType:"json",
 		data:{role_id:rid,ids:ids,qx:qx},
@@ -149,7 +149,7 @@ $(function(){
 	});
 	
 	$("#addRole").click(function(){
-		reloadRoleModal("","/role/add","","","新增角色","新增");
+		reloadRoleModal("",_ctx+"/role/add","","","新增角色","新增");
 		$("#roleModal").modal("show");
 	});
 	
