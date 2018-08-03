@@ -9,8 +9,6 @@ import java.util.Set;
 
 import javax.servlet.http.HttpServletRequest;
 
-import com.lrs.admin.plugin.Page;
-
 /**
  * 拦截所有参数
  * 
@@ -30,15 +28,6 @@ public class ParameterMap extends HashMap implements Map {
 
 	public ParameterMap() {
 		map = new HashMap();
-	}
-
-	public ParameterMap(Page page) {
-		Map<String, Object> pageMap = new HashMap<String, Object>();
-		pageMap.put("currentPage", page.getCurrentPage());
-		pageMap.put("totalPage", page.getTotalPage());
-		pageMap.put("totalResult", page.getTotalResult());
-		pageMap.put("showCount", page.getShowCount());
-		map = pageMap;
 	}
 
 	@SuppressWarnings("unchecked")
@@ -73,7 +62,6 @@ public class ParameterMap extends HashMap implements Map {
 			}
 			returnMap.put(name, value);
 		}
-		returnMap.put("SessionID", request.getSession().getId());
 		map = returnMap;
 	}
 

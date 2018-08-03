@@ -13,7 +13,7 @@ import org.springframework.stereotype.Service;
 import com.lrs.admin.dao.MenuDao;
 import com.lrs.admin.entity.Const;
 import com.lrs.admin.entity.Menu;
-import com.lrs.admin.entity.ReturnModel;
+import com.lrs.admin.entity.ResponseModel;
 import com.lrs.admin.entity.User;
 import com.lrs.admin.service.IMenuService;
 import com.lrs.admin.util.DateUtil;
@@ -63,9 +63,9 @@ public class MenuService implements IMenuService{
 		} catch (Exception e) {
 			e.printStackTrace();
 			log.error("get sub menu error", e);
-			return ReturnModel.getModel("error", "falied", new ArrayList<>());
+			return ResponseModel.getModel("error", "falied", new ArrayList<>());
 		}
-		return ReturnModel.getModel("ok", "success", subms);
+		return ResponseModel.getModel("ok", "success", subms);
 	}
 	
 	@Override
@@ -81,24 +81,24 @@ public class MenuService implements IMenuService{
 		} catch (Exception e) {
 			e.printStackTrace();
 			log.error("add menu error", e);
-			return ReturnModel.getModel("error", "falied", null);
+			return ResponseModel.getModel("error", "falied", null);
 		}
-		return ReturnModel.getModel("ok", "success", null);
+		return ResponseModel.getModel("ok", "success", null);
 	}
 	
 	@Override
 	public Map<String, Object> delMenu(String menuId) {
 		try {
 			if(Tools.isEmpty(menuId) || !Tools.isNumber(menuId)){
-				return ReturnModel.getModel("你请求的是一个冒牌接口", "failed", null);
+				return ResponseModel.getModel("你请求的是一个冒牌接口", "failed", null);
 			}
 			menuDao.delMenu(menuId);
 		} catch (Exception e) {
 			e.printStackTrace();
 			log.error("add menu error", e);
-			return ReturnModel.getModel("error", "falied", null);
+			return ResponseModel.getModel("error", "falied", null);
 		}
-		return ReturnModel.getModel("ok", "success", null);
+		return ResponseModel.getModel("ok", "success", null);
 	}
 	
 	@Override
@@ -106,15 +106,15 @@ public class MenuService implements IMenuService{
 		try {
 			String menuId = pm.getString("menu_id");
 			if(Tools.isEmpty(menuId) || !Tools.isNumber(menuId)){
-				return ReturnModel.getModel("你请求的是一个冒牌接口", "failed", null);
+				return ResponseModel.getModel("你请求的是一个冒牌接口", "failed", null);
 			}
 			menuDao.editMenu(pm);
 		} catch (Exception e) {
 			e.printStackTrace();
 			log.error("add menu error", e);
-			return ReturnModel.getModel("error", "falied", null);
+			return ResponseModel.getModel("error", "falied", null);
 		}
-		return ReturnModel.getModel("ok", "success", null);
+		return ResponseModel.getModel("ok", "success", null);
 	}
 	
 	@Override
@@ -122,14 +122,14 @@ public class MenuService implements IMenuService{
 		ParameterMap menu = null;
 		try {
 			if(Tools.isEmpty(menuId) || !Tools.isNumber(menuId)){
-				return ReturnModel.getModel("你请求的是一个冒牌接口", "failed", null);
+				return ResponseModel.getModel("你请求的是一个冒牌接口", "failed", null);
 			}
 			menu = menuDao.findMenu(menuId);
 		} catch (Exception e) {
 			e.printStackTrace();
 			log.error("add menu error", e);
-			return ReturnModel.getModel("error", "falied", null);
+			return ResponseModel.getModel("error", "falied", null);
 		}
-		return ReturnModel.getModel("ok", "success", menu);
+		return ResponseModel.getModel("ok", "success", menu);
 	}
 }

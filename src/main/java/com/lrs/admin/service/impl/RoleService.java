@@ -14,7 +14,7 @@ import org.springframework.transaction.interceptor.TransactionAspectSupport;
 import com.lrs.admin.dao.RoleDao;
 import com.lrs.admin.entity.Const;
 import com.lrs.admin.entity.Menu;
-import com.lrs.admin.entity.ReturnModel;
+import com.lrs.admin.entity.ResponseModel;
 import com.lrs.admin.entity.User;
 import com.lrs.admin.service.IRoleService;
 import com.lrs.admin.util.ParameterMap;
@@ -59,7 +59,7 @@ public class RoleService implements IRoleService{
 			}else if("query_qx".equalsIgnoreCase(QXtype)){
 				qx = role.getString("query_qx");
 			}else{
-				return ReturnModel.getModel("你请求的是一个冒牌接口", "failed", null);
+				return ResponseModel.getModel("你请求的是一个冒牌接口", "failed", null);
 			}			menus = menuService.getAllMenuList();
 		
 			for(Menu m:menus){
@@ -85,9 +85,9 @@ public class RoleService implements IRoleService{
 			
 		} catch (Exception e) {
 			log.error("error", e);
-			return ReturnModel.getModel("error", "failed", null);
+			return ResponseModel.getModel("error", "failed", null);
 		}
-		return ReturnModel.getModel("ok", "success", menus);
+		return ResponseModel.getModel("ok", "success", menus);
 	}
 	
 	@Override
@@ -105,9 +105,9 @@ public class RoleService implements IRoleService{
 			roleDao.updateRoleQX(pm);
 		} catch (Exception e) {
 			log.error("error", e);
-			return ReturnModel.getModel("error", "failed", null);
+			return ResponseModel.getModel("error", "failed", null);
 		}
-		return ReturnModel.getModel("ok", "success", null);
+		return ResponseModel.getModel("ok", "success", null);
 	}
 
 	@Override
@@ -119,16 +119,16 @@ public class RoleService implements IRoleService{
 		} catch (Exception e) {
 			e.printStackTrace();
 			log.error("add role error", e);
-			return ReturnModel.getModel("error", "falied", null);
+			return ResponseModel.getModel("error", "falied", null);
 		}
-		return ReturnModel.getModel("ok", "success", null);
+		return ResponseModel.getModel("ok", "success", null);
 	}
 
 	@Override
 	public Map<String, Object> del(String roleId) {
 		try {
 			if(Tools.isEmpty(roleId) || !Tools.isNumber(roleId)){
-				return ReturnModel.getModel("你请求的是一个冒牌接口", "failed", null);
+				return ResponseModel.getModel("你请求的是一个冒牌接口", "failed", null);
 			}
 			roleDao.delRole(roleId);
 			roleDao.delUserRole(roleId);
@@ -136,8 +136,8 @@ public class RoleService implements IRoleService{
 			TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();
 			e.printStackTrace();
 			log.error("del role error", e);
-			return ReturnModel.getModel("error", "falied", null);
+			return ResponseModel.getModel("error", "falied", null);
 		}
-		return ReturnModel.getModel("ok", "success", null);
+		return ResponseModel.getModel("ok", "success", null);
 	}
 }

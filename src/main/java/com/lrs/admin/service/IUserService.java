@@ -7,6 +7,7 @@ import javax.servlet.http.HttpSession;
 
 import org.springframework.stereotype.Component;
 
+import com.lrs.admin.entity.User;
 import com.lrs.admin.util.ParameterMap;
 
 @Component
@@ -19,4 +20,5 @@ public interface IUserService {
 	public HashMap<String, Object> edit(ParameterMap pm);
 	public HashMap<String, Object> editRole(ParameterMap pm);
 	public HashMap<String, Object> del(ParameterMap pm);
+	public User getUserInfo(ParameterMap pm);
 }

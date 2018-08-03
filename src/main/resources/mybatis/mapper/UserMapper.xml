@@ -8,6 +8,7 @@
         <result column="nick_name" property="nickName" jdbcType="VARCHAR" />
         <result column="pic_path" property="picPath" jdbcType="VARCHAR" />
         <result column="status" property="status" jdbcType="VARCHAR" />
+        <result column="sessionId" property="sessionId" jdbcType="VARCHAR" />
     </resultMap>
     
  	<resultMap id="roleResultMap" type="role" >
@@ -29,7 +30,8 @@
 			a.nick_name,
 			a.password,
 			a.pic_path,
-			a.status
+			a.status,
+			a.sessionId
 		from 
 			sys_user a
 		where
@@ -130,6 +132,9 @@
 	 		</if>
 	 		<if test="status != null and status != ''">
 	 			,status=#{status}
+	 		</if>
+	 		<if test="sessionId != null and sessionId != ''">
+	 			,sessionId=#{sessionId}
 	 		</if>
  		where
  			user_id = #{user_id}

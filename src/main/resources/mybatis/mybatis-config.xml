@@ -17,13 +17,6 @@
 		<typeAlias type="com.lrs.admin.entity.User" alias="user"  />
 		<typeAlias type="com.lrs.admin.entity.Role" alias="role"  />
 		<typeAlias type="com.lrs.admin.util.ParameterMap" alias="pm"/>
-		<typeAlias type="com.lrs.admin.plugin.Page" alias="Page"/>
 	</typeAliases>
 	
-	<plugins>
-		<plugin interceptor="com.lrs.admin.plugin.PagePlugin">
-			<property name="dialect" value="mysql"/>
-			<property name="pageSqlId" value=".*Page.*"/>
-		</plugin>
-	</plugins>
 </configuration>

@@ -9,7 +9,8 @@ import org.springframework.web.bind.annotation.ResponseBody;
 
 import com.lrs.admin.controller.base.BaseController;
 import com.lrs.admin.entity.Const;
-import com.lrs.admin.entity.ReturnModel;
+import com.lrs.admin.entity.ResponseModel;
+import com.lrs.admin.entity.ResultEnum;
 import com.lrs.admin.entity.User;
 import com.lrs.admin.service.IUserService;
 import com.lrs.admin.util.Jurisdiction;
@@ -29,7 +30,7 @@ public class UserController extends BaseController{
 	 */
 	@RequestMapping(value="/list",method=RequestMethod.GET)
 	public Object login(Model model){
-		if(!Jurisdiction.buttonJurisdiction(menuUrl,"query", this.getSession())){return ReturnModel.getNotAuthModel();}
+		if(!Jurisdiction.buttonJurisdiction(menuUrl,"query", this.getSession())){return ResponseModel.getModel(ResultEnum.NOT_AUTH, null);}
 		model.addAttribute("users", userService.getUserList());
 		model.addAttribute("meid", ((User)this.getSession().getAttribute(Const.SESSION_USER)).getUserId());
 		return "page/user/list";
@@ -42,7 +43,7 @@ public class UserController extends BaseController{
 	@RequestMapping(value="/getRole",method=RequestMethod.GET)
 	@ResponseBody
 	public Object userRole(){
-		if(!Jurisdiction.buttonJurisdiction(menuUrl,"edit", this.getSession())){return ReturnModel.getNotAuthModel();}
+		if(!Jurisdiction.buttonJurisdiction(menuUrl,"edit", this.getSession())){return ResponseModel.getModel(ResultEnum.NOT_AUTH, null);}
 		return userService.getRole(this.getParameterMap());
 	}
 	
@@ -53,7 +54,7 @@ public class UserController extends BaseController{
 	@RequestMapping(value="/add",method=RequestMethod.POST)
 	@ResponseBody
 	public Object add(){
-		if(!Jurisdiction.buttonJurisdiction(menuUrl,"add", this.getSession())){return ReturnModel.getNotAuthModel();}
+		if(!Jurisdiction.buttonJurisdiction(menuUrl,"add", this.getSession())){return ResponseModel.getModel(ResultEnum.NOT_AUTH, null);}
 		return userService.add(this.getParameterMap());
 	}
 	
@@ -65,7 +66,7 @@ public class UserController extends BaseController{
 	@RequestMapping(value="/edit",method=RequestMethod.POST)
 	@ResponseBody
 	public Object edit(){
-		if(!Jurisdiction.buttonJurisdiction(menuUrl,"edit", this.getSession())){return ReturnModel.getNotAuthModel();}
+		if(!Jurisdiction.buttonJurisdiction(menuUrl,"edit", this.getSession())){return ResponseModel.getModel(ResultEnum.NOT_AUTH, null);}
 		return userService.edit(this.getParameterMap());
 	}
 	
@@ -76,7 +77,7 @@ public class UserController extends BaseController{
 	@RequestMapping(value="/editRole",method=RequestMethod.POST)
 	@ResponseBody
 	public Object editRole(){
-		if(!Jurisdiction.buttonJurisdiction(menuUrl,"edit", this.getSession())){return ReturnModel.getNotAuthModel();}
+		if(!Jurisdiction.buttonJurisdiction(menuUrl,"edit", this.getSession())){return ResponseModel.getModel(ResultEnum.NOT_AUTH, null);}
 		return userService.editRole(this.getParameterMap());
 	}
 	
@@ -87,7 +88,7 @@ public class UserController extends BaseController{
 	@RequestMapping(value="/del",method=RequestMethod.POST)
 	@ResponseBody
 	public Object del(){
-		if(!Jurisdiction.buttonJurisdiction(menuUrl,"del", this.getSession())){return ReturnModel.getNotAuthModel();}
+		if(!Jurisdiction.buttonJurisdiction(menuUrl,"del", this.getSession())){return ResponseModel.getModel(ResultEnum.NOT_AUTH, null);}
 		return userService.del(this.getParameterMap());
 	}
 	

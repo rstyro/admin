@@ -2,7 +2,7 @@ package com.lrs.admin.entity;
 
 /**
  * 系统用户
- * @author tyro
+ * @author rstyro
  *
  */
 public class User {
@@ -12,7 +12,16 @@ public class User {
 	private String password;
 	private String picPath;
 	private String status;
+	private String sessionId;
 	
+	
+	public String getSessionId() {
+		return sessionId;
+	}
+	public void setSessionId(String sessionId) {
+		this.sessionId = sessionId;
+	}
+
 	private UserRole userRole;
 	
 	public String getUserId() {
@@ -81,12 +90,27 @@ public class User {
 		this.picPath = picPath;
 		this.userRole = userRole;
 	}
-	
+	public User(String userId, String username, String nickName,
+			String password, String picPath, String status, String sessionId,
+			UserRole userRole) {
+		super();
+		this.userId = userId;
+		this.username = username;
+		this.nickName = nickName;
+		this.password = password;
+		this.picPath = picPath;
+		this.status = status;
+		this.sessionId = sessionId;
+		this.userRole = userRole;
+	}
 	@Override
 	public String toString() {
-		return "User [userId=" + userId + ", username=" + username + ", nickName=" + nickName + ", password=" + password
-				+ ", picPath=" + picPath + ", userRole=" + userRole + "]";
+		return "User [userId=" + userId + ", username=" + username
+				+ ", nickName=" + nickName + ", password=" + password
+				+ ", picPath=" + picPath + ", status=" + status
+				+ ", sessionId=" + sessionId + ", userRole=" + userRole + "]";
 	}
+	
 	
 	
 }

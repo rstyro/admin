@@ -7,15 +7,15 @@ import java.math.BigInteger;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
-import java.util.concurrent.TimeUnit;
+import java.util.Map;
 
+import javax.servlet.ServletContext;
 import javax.servlet.http.HttpSession;
 
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.redis.RedisConnectionFailureException;
-import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.interceptor.TransactionAspectSupport;
 
@@ -24,7 +24,7 @@ import com.lrs.admin.dao.RoleDao;
 import com.lrs.admin.dao.UserDao;
 import com.lrs.admin.entity.Const;
 import com.lrs.admin.entity.Menu;
-import com.lrs.admin.entity.ReturnModel;
+import com.lrs.admin.entity.ResponseModel;
 import com.lrs.admin.entity.Role;
 import com.lrs.admin.entity.User;
 import com.lrs.admin.entity.UserRole;
@@ -63,6 +63,7 @@ public class UserService implements IUserService {
 //	private RedisTemplate<String, Object> redis;
 
 	
+	@SuppressWarnings("unchecked")
 	@Override
 	public HashMap<String, Object> login(ParameterMap pm, HttpSession session) {
 		System.out.println("pm=" + pm);
@@ -70,35 +71,15 @@ public class UserService implements IUserService {
 			String psw = pm.getString("password");
 			String userName = pm.getString("username");
 			if(Tools.isEmpty(userName) || Tools.isEmpty(psw)){
-				return ReturnModel.getModel("你请求的是冒牌接口", "falied", null);
+				return ResponseModel.getModel("你请求的是冒牌接口", "falied", null);
 			}
-			String ip = pm.getString("rip");
 			psw = SHA.encryptSHA(psw);
 			System.out.println("encode psw=" + psw);
-			System.out.println("ip=" + ip);
 			pm.put("password", psw);
 			User user = userDao.getUserInfo(pm);
 			
-			//下面是redis 的
-//			Integer errorNum = (Integer) redis.opsForValue().get(userName);
-//			Integer lockIpNum = (Integer) redis.opsForValue().get(ip);
-//			if(lockIpNum != null && lockIpNum >= 10){
-//				return ReturnModel.getModel("此ip登录错误次数过多，目前已锁定。请联系管理员", "failed", null);
-//			}else if(lockIpNum == null){
-//				lockIpNum=0;
-//			}
-//			if(errorNum != null && errorNum >= 5){
-//				return ReturnModel.getModel("此账号登陆错误次数受限,最后登录ip为:"+redis.opsForValue().get("IP-"+userName), "failed", null);
-//			}else if(errorNum == null){
-//				errorNum=0;
-//			}
-//			if (user == null) {
-//				checkAccount(lockIpNum, errorNum, ip, userName);
-//				return ReturnModel.getModel("用户名或密码错误", "failed", null);
-//			}
-//			System.out.println("user.getStatus()="+user.getStatus());
 			if("lock".equalsIgnoreCase(user.getStatus())){
-				return ReturnModel.getModel("此账号已锁定", "failed", null);
+				return ResponseModel.getModel("此账号已锁定", "failed", null);
 			}
 			//获取用户权限
 			String userId = user.getUserId();
@@ -111,18 +92,34 @@ public class UserService implements IUserService {
 			user.setUserRole(uRole);
 			List<Menu> oneMenuList = menuService.getAllMenuList();
 			checkMenuRole(oneMenuList, uRole.getRights());
+			ServletContext servletContext = session.getServletContext();
+			Map<String,User> globalUser = (Map<String, User>) servletContext.getAttribute(Const.GLOBAL_SESSION);
+			if(globalUser == null){
+				globalUser = new HashMap<String, User>();
+			}else{
+				if(globalUser.containsKey(userName)){
+					globalUser.remove(userName);
+				}
+			}
+			user.setSessionId(session.getId());
+			user.setPassword("*****");
+			globalUser.put(userName, user);
+			session.setMaxInactiveInterval(0);
 			session.setAttribute(Const.SESSION_ALL_MENU, oneMenuList);
 			session.setAttribute(Const.SESSION_USER, user);
+			servletContext.setAttribute(Const.GLOBAL_SESSION, globalUser);
+			ParameterMap condition = new ParameterMap();
+			condition.put("user_id", userId);
+			condition.put("sessionId", session.getId());
+			userDao.editUser(condition);
 			userDao.saveLoginTime(userId);
-		}catch (RedisConnectionFailureException e) {
-			return ReturnModel.getModel("连接redis失败，请检查redis是否开启", "failed", null);
-		}
-		catch (Exception e) {
+			
+		}catch (Exception e) {
 			e.printStackTrace();
 			log.error("login error :" + e.getMessage(), e);
-			return ReturnModel.getModel("登录错误，请稍后重试", "failed", null);
+			return ResponseModel.getModel("登录错误，请稍后重试", "failed", null);
 		}
-		return ReturnModel.getModel("ok", "success", null);
+		return ResponseModel.getModel("ok", "success", null);
 	}
 
 	@Override
@@ -145,7 +142,7 @@ public class UserService implements IUserService {
 		try {
 			String userId = pm.getString("user_id");
 			if(Tools.isEmpty(userId)){
-				return ReturnModel.getModel("你请求的是冒牌接口", "falied", null);
+				return ResponseModel.getModel("你请求的是冒牌接口", "falied", null);
 			}
 			roles = roleDao.list();
 			List<ParameterMap> uroles = roleDao.getRoleByuId(pm);
@@ -165,9 +162,9 @@ public class UserService implements IUserService {
 		} catch (Exception e) {
 			e.printStackTrace();
 			log.error("error:"+e.getMessage(), e);
-			return ReturnModel.getModel("获取失败", "failed", null);
+			return ResponseModel.getModel("获取失败", "failed", null);
 		}
-		return ReturnModel.getModel("ok", "success", roles);
+		return ResponseModel.getModel("ok", "success", roles);
 	}
 	
 	@Override
@@ -175,13 +172,13 @@ public class UserService implements IUserService {
 		try {
 			String password = pm.getString("password");
 			if(Tools.isEmpty(pm.getString("username")) || Tools.isEmpty(password)){
-				return ReturnModel.getModel("你请求的是冒牌接口", "falied", null);
+				return ResponseModel.getModel("你请求的是冒牌接口", "falied", null);
 			}
 			pm.remove("password");
 			pm.put("psw", SHA.encryptSHA(password));
 			User user = userDao.getUserInfo(pm);
 			if(user != null && !Tools.isEmpty(user.getUserId())){
-					return ReturnModel.getModel("用户已存在", "falied", null);
+					return ResponseModel.getModel("用户已存在", "falied", null);
 			}
 			String pics = pm.getString("pics");
 			if(Tools.notEmpty(pics)){
@@ -198,16 +195,16 @@ public class UserService implements IUserService {
 			TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();
 			e.printStackTrace();
 			log.error("error:"+e.getMessage(), e);
-			return ReturnModel.getModel("提交失败", "failed", null);
+			return ResponseModel.getModel("提交失败", "failed", null);
 		}
-		return ReturnModel.getModel("ok", "success", null);
+		return ResponseModel.getModel("ok", "success", null);
 	}
 
 	@Override
 	public HashMap<String, Object> edit(ParameterMap pm) {
 		try {
 			if(Tools.isEmpty(pm.getString("user_id"))){
-				return ReturnModel.getModel("你请求的是冒牌接口", "falied", null);
+				return ResponseModel.getModel("你请求的是冒牌接口", "falied", null);
 			}
 			String password = pm.getString("password");
 			if(Tools.notEmpty(password)){
@@ -224,7 +221,7 @@ public class UserService implements IUserService {
 				
 				String oldPath = pm.getString("oldpath");
 				if(Tools.isEmpty(oldPath)){
-					return ReturnModel.getModel("你请求的是冒牌接口", "falied", null); 
+					return ResponseModel.getModel("你请求的是冒牌接口", "falied", null); 
 				}
 				if(!"/images/logo.png".equals(oldPath)){
 					//删除旧头像
@@ -240,17 +237,16 @@ public class UserService implements IUserService {
 			TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();
 			e.printStackTrace();
 			log.error("error:"+e.getMessage(), e);
-			return ReturnModel.getModel("提交失败", "failed", null);
+			return ResponseModel.getModel("提交失败", "failed", null);
 		}
-		return ReturnModel.getModel("ok", "success", null);
+		return ResponseModel.getModel("ok", "success", null);
 	}
 	
 	@Override
 	public HashMap<String, Object> editRole(ParameterMap pm) {
 		try {
-			System.out.println("==================================pm="+pm);
 			if(Tools.isEmpty(pm.getString("user_id"))){
-				return ReturnModel.getModel("你请求的是冒牌接口", "falied", null);
+				return ResponseModel.getModel("你请求的是冒牌接口", "falied", null);
 			}
 			String ids = pm.getString("ids");
 			String userId = pm.getString("user_id");
@@ -269,15 +265,14 @@ public class UserService implements IUserService {
 			if(parame != null && parame.size() > 0){
 				userDao.bathSaveUserRole(parame);
 			}
-			System.out.println("==================================parame="+parame);
 			
 		} catch (Exception e) {
 			e.printStackTrace();
 			log.error("error:"+e.getMessage(), e);
 			TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();
-			return ReturnModel.getModel("更新失败", "failed", null);
+			return ResponseModel.getModel("更新失败", "failed", null);
 		}
-		return ReturnModel.getModel("ok", "success", null);
+		return ResponseModel.getModel("ok", "success", null);
 	}
 
 	@Override
@@ -286,7 +281,7 @@ public class UserService implements IUserService {
 			String userId = pm.getString("user_id");
 			String userPath = pm.getString("pic_path");
 			if(Tools.isEmpty(userId) || Tools.isEmpty(userPath)){
-				return ReturnModel.getModel("你请求的是冒牌接口", "falied", null);
+				return ResponseModel.getModel("你请求的是冒牌接口", "falied", null);
 			}
 			userDao.delUser(userId);
 			userDao.delUserRole(userId);
@@ -302,41 +297,11 @@ public class UserService implements IUserService {
 			TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();
 			e.printStackTrace();
 			log.error("error:"+e.getMessage(), e);
-			return ReturnModel.getModel("提交失败", "failed", null);
+			return ResponseModel.getModel("提交失败", "failed", null);
 		}
-		return ReturnModel.getModel("ok", "success", null);
+		return ResponseModel.getModel("ok", "success", null);
 	}
 	
-	/**
-	 * 检测账号
-	 * @param lockIpNum
-	 * @param errorNum
-	 * @param ip
-	 * @param userName
-	 */
-//	public void checkAccount(Integer lockIpNum,Integer errorNum,String ip,String userName){
-//		try {
-//			lockIpNum += 1;
-//			errorNum += 1;
-//			if(lockIpNum >= 10){
-//				redis.opsForValue().set(ip, lockIpNum, 12, TimeUnit.HOURS);
-//				log.info("ip受限，来自用户:"+userName+",ip="+ip);
-//			}else{
-//				redis.opsForValue().set(ip, lockIpNum);
-//			}
-//			if(errorNum >= 5){
-//				redis.opsForValue().set(userName, errorNum, 12, TimeUnit.HOURS);
-//				redis.opsForValue().set("IP-"+userName, ip, 12, TimeUnit.HOURS);
-//				log.info("登录错误次数受限，来自用户:"+userName+",ip="+ip);
-//			}else{
-//				redis.opsForValue().set(userName, errorNum);
-//			}
-//		} catch (Exception e) {
-//			e.printStackTrace();
-//			log.error("checkAccount error", e);
-//		}
-//	}
-
 	/**
 	 * 验证权限
 	 * 
@@ -403,6 +368,11 @@ public class UserService implements IUserService {
 		pics = pics.replace("data:image/x-icon;base64,", "");
 		pics = pics.replace("data:image/gif;base64,", "");
 		return pics;
+	}
+
+	@Override
+	public User getUserInfo(ParameterMap pm) {
+		return userDao.getUserInfo(pm);
 	}
 	
 }
