@@ -1,5 +1,7 @@
 package com.lrs.admin.controller;
 
+import com.lrs.admin.annotation.Permission;
+import com.lrs.admin.entity.PermissionType;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -18,7 +20,7 @@ import com.lrs.admin.util.Jurisdiction;
 @RequestMapping("/role")
 public class RoleController extends BaseController{
 	
-	private String qxurl="role/list";
+	private final static String qxurl="role/list";
 	
 	@Autowired
 	private IRoleService roleService;
@@ -39,8 +41,8 @@ public class RoleController extends BaseController{
 	 */
 	@RequestMapping(value="/qx",method=RequestMethod.POST)
 	@ResponseBody
+	@Permission(url = qxurl,type = PermissionType.ADD)
 	public Object qx(){
-		if(!Jurisdiction.buttonJurisdiction(qxurl, "add",this.getSession())){return ResponseModel.getModel(ResultEnum.NOT_AUTH, null);} //校验权限
 		return roleService.getMenu(this.getParameterMap());
 	}
 	
@@ -50,8 +52,8 @@ public class RoleController extends BaseController{
 	 */
 	@RequestMapping(value="/edit",method=RequestMethod.POST)
 	@ResponseBody
+	@Permission(url = qxurl,type = PermissionType.EDIT)
 	public Object edit(){
-		if(!Jurisdiction.buttonJurisdiction(qxurl, "edit",this.getSession())){return ResponseModel.getModel(ResultEnum.NOT_AUTH, null);} //校验权限
 		return roleService.edit(this.getParameterMap());
 	}
 	/**
@@ -60,8 +62,8 @@ public class RoleController extends BaseController{
 	 */
 	@RequestMapping(value="/add",method=RequestMethod.POST)
 	@ResponseBody
+	@Permission(url = qxurl,type = PermissionType.ADD)
 	public Object add(){
-		if(!Jurisdiction.buttonJurisdiction(qxurl, "add",this.getSession())){return ResponseModel.getModel(ResultEnum.NOT_AUTH, null);} //校验权限
 		return roleService.add(this.getParameterMap(),this.getSession());
 	}
 	/**
@@ -70,8 +72,8 @@ public class RoleController extends BaseController{
 	 */
 	@RequestMapping(value="/del/{roleId}",method=RequestMethod.GET)
 	@ResponseBody
+	@Permission(url = qxurl,type = PermissionType.DEL)
 	public Object del(@PathVariable("roleId") String roleId){
-		if(!Jurisdiction.buttonJurisdiction(qxurl, "del",this.getSession())){return ResponseModel.getModel(ResultEnum.NOT_AUTH, null);} //校验权限
 		return roleService.del(roleId);
 	}
 	

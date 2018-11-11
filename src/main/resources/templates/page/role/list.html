@@ -52,28 +52,28 @@
                   <td><span th:text="${#strings.abbreviate(role.role_desc,20)}" th:title="${role.role_desc}" data-toggle="tooltip" data-placement="left" title="角色描述">管理员</span></td>
                   <td>
                   	<span data-toggle="tooltip" data-placement="left" title="赋予角色的菜单权限" th:if="${QX.edit == '1'}" class="btn btn-xs btn-default" th:onclick="'roleMenu(\''+${role.role_id}+'\',\'rights\',\'编辑菜单权限\');'"><i class="fa fa-list"></i> 菜单权限</span>
-                  	<span data-toggle="tooltip" title="权限不够" th:unless="${QX.edit == '1'}" ><i class="fa fa-lock"></i> 无权限</span>
+                  	<span data-toggle="tooltip" title="权限不够" th:unless="${QX.edit == '1'}" ><i class="fa fa-lock"></i> </span>
                   </td>
                   <td>
                   	<span data-toggle="tooltip" data-placement="left" title="赋予菜单添加的权限" th:if="${QX.edit == '1'}" class="btn btn-xs btn-default" th:onclick="'roleMenu(\''+${role.role_id}+'\',\'add_qx\',\'编辑添加权限\');'"><i class="fa fa-plus"></i> 添加权限</span>
-                  	<span data-toggle="tooltip" title="权限不够" th:unless="${QX.edit == '1'}" ><i class="fa fa-lock"></i> 无权限</span>
+                  	<span data-toggle="tooltip" title="权限不够" th:unless="${QX.edit == '1'}" ><i class="fa fa-lock"></i> </span>
                   </td>
                   <td>
                   	<span data-toggle="tooltip" data-placement="left" title="赋予菜单删除的权限" th:if="${QX.edit == '1'}" class="btn btn-xs btn-default" th:onclick="'roleMenu(\''+${role.role_id}+'\',\'del_qx\',\'编辑删除权限\');'"><i class="fa fa-trash-o"></i> 删除权限</span>
-                  	<span data-toggle="tooltip" title="权限不够" th:unless="${QX.edit == '1'}" ><i class="fa fa-lock"></i> 无权限</span>
+                  	<span data-toggle="tooltip" title="权限不够" th:unless="${QX.edit == '1'}" ><i class="fa fa-lock"></i> </span>
                   </td>
                   <td>
-                  	<span data-toggle="tooltip" data-placement="left" title="赋予菜单编辑的权限" th:if="${QX.edit == '1'}" class="btn btn-xs btn-default" th:onclick="'roleMenu(\''+${role.role_id}+'\',\'edit_qx\',\'编辑修改权限\');'"><i class="fa fa-edit"></i> 编辑权限</span>
-                  	<span data-toggle="tooltip" title="权限不够" th:unless="${QX.edit == '1'}" ><i class="fa fa-lock"></i> 无权限</span>
+                  	<span data-toggle="tooltip" data-placement="left" title="赋予菜单编辑的权限" th:if="${QX.edit == '1'}" class="btn btn-xs btn-default" th:onclick="'roleMenu(\''+${role.role_id}+'\',\'edit_qx\',\'编辑修改权限\');'"><i class="fa fa-edit"></i> 修改权限</span>
+                  	<span data-toggle="tooltip" title="权限不够" th:unless="${QX.edit == '1'}" ><i class="fa fa-lock"></i> </span>
                   </td>
                   <td>
                   	<span data-toggle="tooltip" data-placement="left" title="赋予菜单查看的权限" th:if="${QX.edit == '1'}" class="btn btn-xs btn-default" th:onclick="'roleMenu(\''+${role.role_id}+'\',\'query_qx\',\'编辑查看权限\');'"><i class="fa fa-eye"></i> 查看权限</span>
-                  	<span data-toggle="tooltip" title="权限不够" th:unless="${QX.edit == '1'}" ><i class="fa fa-lock"></i> 无权限</span>
+                  	<span data-toggle="tooltip" title="权限不够" th:unless="${QX.edit == '1'}" ><i class="fa fa-lock"></i> </span>
                   </td>
                   <td>
-                  	<span class="btn btn-xs btn-danger" th:if="${QX.del == '1'}"  th:onclick="'delRole(\''+${role.role_id}+'\');'"><i class="fa fa-trash-o"></i> 删除</span>
-                  	<span class="btn btn-xs btn-info" th:if="${QX.edit == '1'}" th:onclick="'editRole(\''+${role.role_id}+'\',\''+${role.role_name}+'\',\''+${role.role_desc}+'\');'"><i class="fa fa-edit"></i> 编辑</span>
-                  	<span data-toggle="tooltip" title="权限不够" th:unless="${QX.del == '1' && QX.edit == '1'}" ><i class="fa fa-lock"></i> 无权限</span>
+                  	<span class="btn btn-xs btn-danger" th:if="${QX.del == '1'}"  th:onclick="'delRole(\''+${role.role_id}+'\');'"><i class="fa fa-trash-o"></i> </span>
+                  	<span class="btn btn-xs btn-info" th:if="${QX.edit == '1'}" th:onclick="'editRole(\''+${role.role_id}+'\',\''+${role.role_name}+'\',\''+${role.role_desc}+'\');'"><i class="fa fa-edit"></i> </span>
+                  	<span data-toggle="tooltip" title="权限不够" th:unless="${QX.del == '1' || QX.edit == '1'}" ><i class="fa fa-lock"></i> </span>
                   </td>
                 </tr>
                 <tr th:unless="${QX.query == '1'}" >

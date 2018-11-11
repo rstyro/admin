@@ -1,5 +1,7 @@
 package com.lrs.admin.controller;
 
+import com.lrs.admin.annotation.Permission;
+import com.lrs.admin.entity.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -8,10 +10,6 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 import com.lrs.admin.controller.base.BaseController;
-import com.lrs.admin.entity.Const;
-import com.lrs.admin.entity.ResponseModel;
-import com.lrs.admin.entity.ResultEnum;
-import com.lrs.admin.entity.User;
 import com.lrs.admin.service.IUserService;
 import com.lrs.admin.util.Jurisdiction;
 
@@ -22,15 +20,15 @@ public class UserController extends BaseController{
 	@Autowired
 	private IUserService userService;
 	
-	private String menuUrl = "user/list";
+	private final  static String qxurl = "user/list";
 	
 	/**
 	 * 用户列表
 	 * @return
 	 */
 	@RequestMapping(value="/list",method=RequestMethod.GET)
+	@Permission(url = qxurl,type = PermissionType.QUERY)
 	public Object login(Model model){
-		if(!Jurisdiction.buttonJurisdiction(menuUrl,"query", this.getSession())){return ResponseModel.getModel(ResultEnum.NOT_AUTH, null);}
 		model.addAttribute("users", userService.getUserList());
 		model.addAttribute("meid", ((User)this.getSession().getAttribute(Const.SESSION_USER)).getUserId());
 		return "page/user/list";
@@ -42,8 +40,8 @@ public class UserController extends BaseController{
 	 */
 	@RequestMapping(value="/getRole",method=RequestMethod.GET)
 	@ResponseBody
+	@Permission(url = qxurl,type = PermissionType.EDIT)
 	public Object userRole(){
-		if(!Jurisdiction.buttonJurisdiction(menuUrl,"edit", this.getSession())){return ResponseModel.getModel(ResultEnum.NOT_AUTH, null);}
 		return userService.getRole(this.getParameterMap());
 	}
 	
@@ -53,8 +51,8 @@ public class UserController extends BaseController{
 	 */
 	@RequestMapping(value="/add",method=RequestMethod.POST)
 	@ResponseBody
+	@Permission(url = qxurl,type = PermissionType.ADD)
 	public Object add(){
-		if(!Jurisdiction.buttonJurisdiction(menuUrl,"add", this.getSession())){return ResponseModel.getModel(ResultEnum.NOT_AUTH, null);}
 		return userService.add(this.getParameterMap());
 	}
 	
@@ -65,8 +63,8 @@ public class UserController extends BaseController{
 	 */
 	@RequestMapping(value="/edit",method=RequestMethod.POST)
 	@ResponseBody
+	@Permission(url = qxurl,type = PermissionType.EDIT)
 	public Object edit(){
-		if(!Jurisdiction.buttonJurisdiction(menuUrl,"edit", this.getSession())){return ResponseModel.getModel(ResultEnum.NOT_AUTH, null);}
 		return userService.edit(this.getParameterMap());
 	}
 	
@@ -76,8 +74,8 @@ public class UserController extends BaseController{
 	 */
 	@RequestMapping(value="/editRole",method=RequestMethod.POST)
 	@ResponseBody
+	@Permission(url = qxurl,type = PermissionType.EDIT)
 	public Object editRole(){
-		if(!Jurisdiction.buttonJurisdiction(menuUrl,"edit", this.getSession())){return ResponseModel.getModel(ResultEnum.NOT_AUTH, null);}
 		return userService.editRole(this.getParameterMap());
 	}
 	
@@ -87,8 +85,8 @@ public class UserController extends BaseController{
 	 */
 	@RequestMapping(value="/del",method=RequestMethod.POST)
 	@ResponseBody
+	@Permission(url = qxurl,type = PermissionType.DEL)
 	public Object del(){
-		if(!Jurisdiction.buttonJurisdiction(menuUrl,"del", this.getSession())){return ResponseModel.getModel(ResultEnum.NOT_AUTH, null);}
 		return userService.del(this.getParameterMap());
 	}
 	

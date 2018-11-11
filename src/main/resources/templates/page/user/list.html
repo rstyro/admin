@@ -126,9 +126,9 @@ div.cbp label.font{
                   <td>
                   	<div th:if="${user.user_id != 1 || meid == '1'}">
 	                  	<span data-toggle="tooltip" title="给用户分配角色" th:if="${QX.edit == '1'}" class="btn btn-xs btn-primary" th:onclick="'allotRole(\''+${user.user_id}+'\');'"><i class="fa fa-user-md"></i> 分配角色</span>
-	                  	<span data-toggle="tooltip" title="编辑用户信息" th:if="${QX.edit == '1'}" class="btn btn-xs btn-info" th:onclick="'editUser(\''+${user.user_id}+'\',\''+${user.username}+'\',\''+${user.nick_name}+'\',\''+${user.pic_path}+'\');'"><i class="fa fa-edit"></i> 编辑</span>
-	                  	<span data-toggle="tooltip" title="删除用户" th:if="${QX.del == '1'}" class="btn btn-xs btn-danger" th:onclick="'delUser(\''+${user.user_id}+'\',\''+${user.pic_path}+'\');'"><i class="fa fa-trash-o"></i> 删除</span>
-	                  	<span data-toggle="tooltip" title="权限不够" th:unless="${QX.edit == '1' || QX.add == '1' || QX.del == '1'}" ><i class="fa fa-lock"></i> 无权限</span>
+	                  	<span data-toggle="tooltip" title="编辑用户信息" th:if="${QX.edit == '1'}" class="btn btn-xs btn-info" th:onclick="'editUser(\''+${user.user_id}+'\',\''+${user.username}+'\',\''+${user.nick_name}+'\',\''+${user.pic_path}+'\');'"><i class="fa fa-edit"></i> </span>
+	                  	<span data-toggle="tooltip" title="删除用户" th:if="${QX.del == '1'}" class="btn btn-xs btn-danger" th:onclick="'delUser(\''+${user.user_id}+'\',\''+${user.pic_path}+'\');'"><i class="fa fa-trash-o"></i> </span>
+	                  	<span data-toggle="tooltip" title="权限不够" th:unless="${QX.edit == '1' || QX.add == '1' || QX.del == '1'}" ><i class="fa fa-lock"></i> </span>
                   	</div>
                   	<div th:if="${user.user_id == 1 && meid != '1'}">
 	                  	<span><i class="fa fa-lock"></i></span>

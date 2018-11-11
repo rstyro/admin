@@ -21,7 +21,7 @@ public class IndexController extends BaseController{
 	
 	@Value("${admin.name}")
 	private String adminName;
-	
+
 	@Autowired
 	private IUserService userService;
 	

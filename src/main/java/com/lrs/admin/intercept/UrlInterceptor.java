@@ -1,15 +1,23 @@
 package com.lrs.admin.intercept;
 
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-import javax.servlet.http.HttpSession;
-
+import com.alibaba.druid.util.StringUtils;
+import com.alibaba.fastjson.JSONObject;
+import com.lrs.admin.annotation.Permission;
+import com.lrs.admin.entity.Const;
+import com.lrs.admin.entity.ResponseModel;
+import com.lrs.admin.entity.ResultEnum;
+import com.lrs.admin.entity.User;
+import com.lrs.admin.util.Jurisdiction;
+import org.springframework.web.method.HandlerMethod;
 import org.springframework.web.servlet.HandlerInterceptor;
 import org.springframework.web.servlet.ModelAndView;
 
-import com.lrs.admin.entity.Const;
-import com.lrs.admin.entity.User;
-import com.lrs.admin.util.Jurisdiction;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+import javax.servlet.http.HttpSession;
+import java.io.IOException;
+import java.io.PrintWriter;
+import java.util.HashMap;
 
 public class UrlInterceptor implements HandlerInterceptor{
 
@@ -30,7 +38,7 @@ public class UrlInterceptor implements HandlerInterceptor{
 	}
 
 	@Override
-	public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object arg2) throws Exception {
+	public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler) throws Exception {
 		try {
 			HttpSession session = request.getSession();
 			String path = request.getServletPath();
@@ -47,10 +55,47 @@ public class UrlInterceptor implements HandlerInterceptor{
 					return b;
 				}
 			}
+
+			//是否有权限
+			if (handler.getClass().isAssignableFrom(HandlerMethod.class)) {
+				HandlerMethod handlerMethod = (HandlerMethod) handler;
+				//获取controller注解， controller检查是否有权限控制
+				Permission permission = handlerMethod.getMethod().getDeclaringClass().getAnnotation(Permission.class);
+				if(!checkPermission(permission,request)){
+					outputJson(response, ResponseModel.getModel(ResultEnum.NOT_AUTH,null));
+					return false;
+				}
+				//获取方法注解，方法检查是否有权限控制
+				permission = handlerMethod.getMethod().getAnnotation(Permission.class);
+				if(!checkPermission(permission,request)){
+					outputJson(response, ResponseModel.getModel(ResultEnum.NOT_AUTH,null));
+					return false;
+				}
+			}
+
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
 		return true;
 	}
 
+	//校验是否有权限
+	private boolean checkPermission(Permission permission, HttpServletRequest request) throws IOException {
+		if (permission != null && !StringUtils.isEmpty(permission.url()) && !StringUtils.isEmpty(permission.type().getType())) {
+			if(!Jurisdiction.buttonJurisdiction(permission.url(), permission.type().getType(),request.getSession())){
+				return false;
+			}
+		}
+		return true;
+	}
+
+	//json 字符串返回
+	private void outputJson(HttpServletResponse response, HashMap<String,Object> model) throws IOException {
+		response.setCharacterEncoding("UTF-8");
+		response.setContentType("application/json; charset=utf-8");
+		PrintWriter out = null ;
+		String json = JSONObject.toJSON(model).toString();
+		out = response.getWriter();
+		out.append(json);
+	}
 }
