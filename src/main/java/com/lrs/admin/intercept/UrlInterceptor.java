@@ -1,7 +1,7 @@
 package com.lrs.admin.intercept;
 
 import com.alibaba.druid.util.StringUtils;
-import com.alibaba.fastjson.JSONObject;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.lrs.admin.annotation.Permission;
 import com.lrs.admin.entity.Const;
 import com.lrs.admin.entity.ResponseModel;
@@ -94,7 +94,7 @@ public class UrlInterceptor implements HandlerInterceptor{
 		response.setCharacterEncoding("UTF-8");
 		response.setContentType("application/json; charset=utf-8");
 		PrintWriter out = null ;
-		String json = JSONObject.toJSON(model).toString();
+		String json =  new ObjectMapper().writeValueAsString(model);
 		out = response.getWriter();
 		out.append(json);
 	}
