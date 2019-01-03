@@ -10,3 +10,10 @@
 ## 觉得有用，点个Stars(收藏)啊
 ![预览图](https://github.com/rstyro/admin/blob/master/showimg/2.png)
 ![预览图二](https://github.com/rstyro/admin/blob/master/showimg/1.png)
+
+
+# 这个是比较老的版本，我重新重构了一版，[Springboot + mybatis-plus](https://github.com/rstyro/admin-plus),
+## 优点：
+### 一、代码生成器，
+### 二、页面代码生成器
+### 三、炒鸡方便
