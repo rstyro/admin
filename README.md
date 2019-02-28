@@ -13,7 +13,7 @@
 ![预览图二](https://github.com/rstyro/admin/blob/master/showimg/1.png)
 
 
-## 这个是比较老的版本，我重新重构了一版，[SpringBoot2 + mybatis-plus](https://github.com/rstyro/admin-plus),
+### 这个是比较老的版本，我重新重构了一版，主要技术：[SpringBoot2 + mybatis-plus](https://github.com/rstyro/admin-plus),
 ## 优点：
 ### 一、代码生成器，
 ### 二、页面代码生成器
